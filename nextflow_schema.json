@@ -177,7 +177,17 @@
                     "type": "boolean",
                     "description": "Option to skip phasing",
                     "fa_icon": "fas fa-forward"
-                }
+                },               
+                "expected_cn": {
+                    "type": "string",
+                    "description": "Path to expected copy number BED file",
+                    "fa_icon": "far fa-file-code"
+                },
+                "cnv_excluded_regions": {
+                    "type": "string",
+                    "description": "Path to excluded CNV regions BED file",
+                    "fa_icon": "far fa-file-code"
+                },
             }
         },
         "repeat": {
