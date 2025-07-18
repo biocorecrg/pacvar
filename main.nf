@@ -31,15 +31,17 @@ params.dict         = getGenomeAttribute('dict')
 workflow NFCORE_PACVAR {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
-    fasta       // channel: [mandatory] fasta
-    fasta_fai   // channel: [mandatory] fasta_fai
-    dict        // channel: [mandatory] dict
-    dbsnp       // channel: [mandatory] dbsnp
-    dbsnp_tbi   // channel: [mandatory] dbsnp_tbi
-    intervals   // channel: [mandatory] intervals
-    repeat_id   // channel: [mandatory] id
-    karyotype   // channel: [mandatory] karyotype
+    samplesheet            // channel: samplesheet read in from --input
+    fasta                  // channel: [mandatory] fasta
+    fasta_fai              // channel: [mandatory] fasta_fai
+    dict                   // channel: [mandatory] dict
+    dbsnp                  // channel: [mandatory] dbsnp
+    dbsnp_tbi              // channel: [mandatory] dbsnp_tbi
+    intervals              // channel: [mandatory] intervals
+    repeat_id              // channel: [mandatory] id
+    karyotype              // channel: [mandatory] karyotype
+    expected_cn            // channel: [mandatory] expected_cn
+    cnv_excluded_regions   // channel: [mandatory] cnv_excluded_regions
 
     main:
     //
@@ -54,7 +56,10 @@ workflow NFCORE_PACVAR {
         dbsnp_tbi,
         intervals,
         repeat_id,
-        karyotype
+        karyotype,
+        expected_cn,
+        cnv_excluded_regions
+        
     )
 
 
@@ -72,15 +77,18 @@ workflow {
     main:
 
     // Initialize genomic attibutes with associated meta data maps as channels
-    fasta               = params.fasta ? Channel.fromPath(params.fasta).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
-    fasta_fai           = params.fasta_fai ? Channel.fromPath(params.fasta_fai).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
-    dict                = params.dict ? Channel.fromPath(params.dict).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
-    dbsnp               = params.dbsnp ? Channel.fromPath(params.dbsnp).collect() : Channel.value([])
-    dbsnp_tbi           = params.dbsnp_tbi ? Channel.fromPath(params.dbsnp_tbi).collect() : Channel.value([])
+    fasta                = params.fasta ? Channel.fromPath(params.fasta).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
+    fasta_fai            = params.fasta_fai ? Channel.fromPath(params.fasta_fai).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
+    dict                 = params.dict ? Channel.fromPath(params.dict).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
+    dbsnp                = params.dbsnp ? Channel.fromPath(params.dbsnp).collect() : Channel.value([])
+    dbsnp_tbi            = params.dbsnp_tbi ? Channel.fromPath(params.dbsnp_tbi).collect() : Channel.value([])
 
-    intervals           = params.intervals ? Channel.fromPath(params.intervals).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.value([[],[]])
-    repeat_id           = params.repeat_id ? Channel.fromPath(params.repeat_id).map{ it -> [ [id:it.baseName], it.baseName ] }.collect() : Channel.value([])
-    karyotype           = params.karyotype ? Channel.fromPath(params.karyotype).map{ it -> [ [id:it.baseName], it.baseName ] }.collect() : Channel.value([])
+    intervals            = params.intervals ? Channel.fromPath(params.intervals).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.value([[],[]])
+    repeat_id            = params.repeat_id ? Channel.fromPath(params.repeat_id).map{ it -> [ [id:it.baseName], it.baseName ] }.collect() : Channel.value([])
+    karyotype            = params.karyotype ? Channel.fromPath(params.karyotype).map{ it -> [ [id:it.baseName], it.baseName ] }.collect() : Channel.value([])
+
+    expected_cn          = params.expected_cn ? Channel.fromPath(params.expected_cn).collect() : Channel.value([])
+    cnv_excluded_regions = params.cnv_excluded_regions ? Channel.fromPath(params.cnv_excluded_regions).collect() : Channel.value([])
 
     //
     // SUBWORKFLOW: Run initialisation tasks
@@ -106,7 +114,9 @@ workflow {
         dbsnp_tbi,
         intervals,
         repeat_id,
-        karyotype
+        karyotype,
+        expected_cn,
+        cnv_excluded_regions
     )
     //
     // SUBWORKFLOW: Run completion tasks
