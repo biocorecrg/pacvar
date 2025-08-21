@@ -55,7 +55,9 @@ workflow PACVAR {
     intervals
     repeat_id
     karyotype
-
+    expected_cn
+    cnv_excluded_regions
+ 
     main:
     ch_versions = Channel.empty()
 
@@ -140,7 +142,10 @@ workflow PACVAR {
             BAM_SV_VARIANT_CALLING(ordered_bam_ch,
                 ordered_bai_ch,
                 fasta,
-                fasta_fai)
+                fasta_fai,
+                expected_cn,
+                cnv_excluded_regions
+                )
 
             ch_versions = ch_versions.mix(BAM_SV_VARIANT_CALLING.out.versions)
 
