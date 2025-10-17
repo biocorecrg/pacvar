@@ -5,8 +5,7 @@ process PBMM2_ALIGN {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pbmm2:1.14.99--h9ee0642_0':
-        'biocontainers/pbmm2:1.14.99--h9ee0642_0' }"
+        'quay.io/biocontainers/pbmm2:1.17.0--h9ee0642_0': 'quay.io/biocontainers/pbmm2:1.17.0--h9ee0642_0' }"
 
     input:
     tuple val(meta), path(bam)
@@ -20,8 +19,9 @@ process PBMM2_ALIGN {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def args          = task.ext.args ?: ''
+    def prefix        = task.ext.prefix ?: "${meta.id}"
+    def input_content = bam.join("\n")
 
     """
     # pbmm2 doesn't support .fna extension, so rename to .fa
@@ -30,12 +30,15 @@ process PBMM2_ALIGN {
     elif [[ ${fasta} == *.fna.gz ]]; then
         ln -s \$(readlink -f ${fasta}) \${${fasta}‰.fna.gz}.fa.gz
     fi
+    
+    # create a fof for multiple bams
+    echo "${input_content}" >> myfiles.fofn
 
     pbmm2 \\
         align \\
         $args \\
         $fasta \\
-        $bam \\
+        myfiles.fofn \\
         ${prefix}.bam \\
         --num-threads ${task.cpus}
 
