@@ -45,7 +45,7 @@ process PBMM2_ALIGN {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         pbmm2: \$(pbmm2 --version |& sed '1!d ; s/pbmm2 //')
-    END_VERSIONS
+END_VERSIONS
     """
 
     stub:
