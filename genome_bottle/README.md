@@ -23,8 +23,7 @@ https://urldefense.com/v3/__https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/
 ```
 reference=/users/bi/fandrade/projects/unicas_benchmarking/data/reference/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf
 ```
-cf **VCF from deepva
-genome
+**VCF from deepvariant**
 
 ```
 deepvariant=/users/bi/fandrade/projects/unicas_benchmarking/data/deepvariant/SON.vcf
